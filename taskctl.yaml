@@ -1,0 +1,25 @@
+contexts:
+  pwsh:
+    executable:
+      bin: docker
+      args:
+        - run
+        - --rm
+        - -v
+        - ${PWD}:/app
+        - -w
+        - /app
+        - mcr.microsoft.com/powershell:7.2.1-debian-10
+        - pwsh
+        - -NoProfile
+        - -Command
+
+tasks:
+
+  releasenotes:
+    context: pwsh
+    command:
+      - /app/scripts/Build-ReleaseNotes.ps1 -cutoff $CUTOFF -excludes $EXCLUDES -InformationAction Continue
+    env:
+      CUTOFF: $CUTOFF
+      EXCLUDES: $EXCLUDES

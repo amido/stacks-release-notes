@@ -1,0 +1,10 @@
+{
+    "repos": [
+        "amido/stacks-dotnet",
+        "amido/stacks-dotnet-cqrs",
+        "amido/stacks-dotnet-cqrs-events",
+        "amido/stacks-java",
+        "amido/stacks-java-cqrs",
+        "amido/stacks-java-cqrs-events"
+    ]
+}

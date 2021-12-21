@@ -1,0 +1,44 @@
+name: 0.0$(Rev:.r)
+
+# Set the vmImage to use for builds
+pool:
+  vmImage: ubuntu-20.04
+
+variables:
+  - template: azuredevops-vars.yml  
+
+stages:
+
+  - stage: CreateNotes
+
+    jobs:
+
+      - job: GetNotes
+        steps:
+
+        # Install Taskfile for the build to run
+        - task: Bash@3
+          displayName: Install Taskctl
+          inputs:
+            targetType: inline
+            script: |
+              wget https://github.com/taskctl/taskctl/releases/download/${{ variables.TaskctlVersion }}/taskctl_${{ variables.TaskctlVersion }}_linux_amd64.tar.gz -O /tmp/taskctl.tar.gz
+              tar zxf /tmp/taskctl.tar.gz -C /usr/local/bin taskctl
+
+        # Run the task to generate the release notes
+        - task: Bash@3
+          displayName: Build & Test
+          inputs:
+            targetType: inline
+            script: |
+              taskctl releasenotes
+          env:
+            CUTOFF: ${{ variables.cutoff }}
+            EXCLUDES: ${{ variables.excludes }}
+
+        # Upload the generated release notes as artifacts
+        - task: PublishBuildArtifacts@1
+          displayName: Publish Release Notes
+          inputs:
+            pathToPublish: $(Build.SourcesDirectory)/outputs
+            artifactName: ReleaseNotes      
